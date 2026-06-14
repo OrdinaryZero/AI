@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Absensi AI - Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --bg: #FAFAFA; 
+            --card: #FFFFFF; 
+            --text: #333333; 
+            --text-muted: #7A8794;
+            --blue-warm: #4A6D8C; 
+            --orange-warm: #D47A43; 
+            --border: #E8E9EB;
+        }
+        
+        body { 
+            font-family: 'Outfit', sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text); 
+            margin: 0; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh;
+            background-image: radial-gradient(var(--border) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        .dashboard-container { text-align: center; max-width: 900px; padding: 20px; }
+        .dashboard-header h1 { font-size: 2.8em; color: var(--blue-warm); margin: 0 0 10px 0; letter-spacing: -1px; }
+        .dashboard-header p { font-size: 1.2em; color: var(--text-muted); margin-bottom: 50px; }
+
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; }
+
+        .menu-card {
+            background: var(--card); padding: 40px 30px; border-radius: 20px; text-decoration: none; color: var(--text);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.03); border: 1px solid var(--border);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; align-items: center; gap: 15px;
+        }
+
+        .menu-card:hover { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(74, 109, 140, 0.1); border-color: var(--orange-warm); }
+
+        .icon-box {
+            background: #F0F4F8; width: 75px; height: 75px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2.2em;
+            color: var(--blue-warm); transition: 0.3s;
+        }
+
+        .menu-card:hover .icon-box { background: var(--orange-warm); color: white; }
+        .menu-card h3 { margin: 0; font-size: 1.4em; }
+        .menu-card p { margin: 0; color: var(--text-muted); font-size: 0.95em; line-height: 1.5; }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1>Smart Absensi</h1>
+            <p>Sistem presensi akademik berbasis Face Scan</p>
+        </div>
+        <div class="menu-grid">
+            <a href="/absensi" class="menu-card">
+                <div class="icon-box">📷</div>
+                <h3>Absensi</h3>
+                <p>Mulai pemindaian wajah untuk mencatat kehadiran secara real-time</p>
+            </a>
+            <a href="/registrasi" class="menu-card">
+                <div class="icon-box">📝</div>
+                <h3>Registrasi Mahasiswa</h3>
+                <p>Tambahkan data pengguna baru beserta pendaftaran biometrik wajah</p>
+            </a>
+            <a href="/admin" class="menu-card">
+                <div class="icon-box">🗄️</div>
+                <h3>Panel Admin</h3>
+                <p>Pantau log kehadiran, status keterlambatan, dan rekapitulasi</p>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

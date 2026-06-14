@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Absensi - Smart Campus</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root { 
+            --bg: #FAFAFA; --card: #FFFFFF; --text: #333333; 
+            --blue-warm: #4A6D8C; --orange-warm: #D47A43; --border: #E8E9EB;
+        }
+        
+        body { font-family: 'Outfit', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        .navbar { width: 100%; background: var(--card); padding: 15px 40px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; border-bottom: 1px solid var(--border); }
+        .navbar a.back-btn { color: var(--blue-warm); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: 0.3s; }
+        .navbar a.back-btn:hover { color: var(--orange-warm); }
+        .time-display { font-size: 1.2em; font-weight: 700; color: var(--orange-warm); background: var(--bg); padding: 8px 20px; border-radius: 20px; border: 1px solid var(--border); }
+
+        /* KOTAK KAMERA DIPERBESAR (max-width jadi 1100px) */
+        .main-container { margin-top: 30px; display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 1100px; padding: 0 20px; box-sizing: border-box; }
+        .header-text { text-align: center; margin-bottom: 20px; }
+        .header-text h2 { margin: 0 0 5px 0; font-size: 2em; color: var(--blue-warm); }
+        .header-text p { margin: 0; color: #7A8794; font-size: 1.1em; }
+
+        .scanner-card { background: var(--card); padding: 25px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.04); width: 100%; display: flex; flex-direction: column; align-items: center; border: 1px solid var(--border); }
+        .camera-wrapper { width: 100%; border-radius: 12px; overflow: hidden; position: relative; border: 4px solid var(--blue-warm); background: #000; aspect-ratio: 16/9; display: flex; justify-content: center; align-items: center; box-shadow: 0 10px 25px rgba(74, 109, 140, 0.2); }
+        .camera-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+
+        .scan-line { position: absolute; width: 100%; height: 4px; background: rgba(212, 122, 67, 0.6); box-shadow: 0 0 15px rgba(212, 122, 67, 0.8); top: 0; animation: scan 3s infinite linear; }
+        @keyframes scan { 0% { top: 0; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+
+        .controls { margin-top: 25px; width: 100%; display: flex; justify-content: center;}
+        select { padding: 12px 20px; border-radius: 8px; border: 1px solid var(--border); font-family: inherit; font-size: 1em; color: var(--text); background-color: var(--bg); cursor: pointer; outline: none; width: 100%; max-width: 400px; }
+        select:focus { border-color: var(--blue-warm); }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="/" class="back-btn">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            Kembali
+        </a>
+        <div class="time-display" id="liveClock">00:00:00</div>
+    </div>
+
+    <div class="main-container">
+        <div class="header-text">
+            <h2>Pemindai Wajah</h2>
+            <p>Posisikan wajah Anda di tengah layar</p>
+        </div>
+        <div class="scanner-card">
+            <div class="camera-wrapper">
+                <img src="{{ url_for('video_feed') }}" id="videoStream" alt="Memuat Kamera...">
+                <div class="scan-line"></div>
+            </div>
+            <div class="controls">
+                <select id="cameraSelect" onchange="changeCamera()">
+                    <option value="0">📷 Kamera Utama (Bawaan)</option>
+                    <option value="1">📸 Kamera Eksternal (Cam 1)</option>
+                    <option value="2">📸 Kamera Eksternal (Cam 2)</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateClock() { document.getElementById('liveClock').innerText = new Date().toLocaleTimeString('id-ID', { hour12: false }); }
+        setInterval(updateClock, 1000); updateClock();
+
+        function changeCamera() {
+            let camIndex = document.getElementById("cameraSelect").value;
+            fetch('/switch_camera', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ cam_index: camIndex }) })
+            .then(() => { document.getElementById('videoStream').src = "{{ url_for('video_feed') }}?" + new Date().getTime(); });
+        }
+
+        let lastLogId = null; 
+        async function checkLatestLog() {
+            try {
+                let response = await fetch('/api/latest_log'); let data = await response.json();
+                if (data.id !== 0) {
+                    if (lastLogId === null) { lastLogId = data.id; } 
+                    else if (data.id > lastLogId) {
+                        lastLogId = data.id;
+                        let isTelat = data.status === "Terlambat";
+                        Swal.fire({
+                            toast: true, position: 'top-end',
+                            icon: isTelat ? "warning" : "success",
+                            title: `Absen Berhasil!`,
+                            html: `<b style="color: #4A6D8C">${data.nama}</b><br><small>${data.waktu}</small>`,
+                            showConfirmButton: false, timer: 4000, timerProgressBar: true,
+                            background: '#FFFFFF', color: '#333333',
+                            iconColor: isTelat ? '#D47A43' : '#4A6D8C'
+                        });
+                    }
+                }
+            } catch (error) { console.error(error); }
+        }
+        setInterval(checkLatestLog, 1000);
+    </script>
+</body>
+</html>

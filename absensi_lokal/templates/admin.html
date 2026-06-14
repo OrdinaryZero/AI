@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Panel Kendali</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --bg: #FAFAFA; --card: #FFFFFF; --text: #333333; 
+            --blue-warm: #4A6D8C; --orange-warm: #D47A43; --border: #E8E9EB;
+        }
+        body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        
+        .navbar { width: 100%; background: var(--card); padding: 15px 40px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; border-bottom: 1px solid var(--border); }
+        .navbar a.back-btn { color: var(--blue-warm); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: 0.3s;}
+        .navbar a.back-btn:hover { color: var(--orange-warm); }
+        .navbar h2 { margin: 0; font-size: 1.2em; color: var(--blue-warm); }
+
+        .table-container { width: 100%; max-width: 1100px; margin-top: 30px; background: var(--card); border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid var(--border); box-sizing: border-box; margin-bottom: 30px; }
+        .table-header { margin-bottom: 20px; }
+        .table-header h3 { margin: 0; color: var(--blue-warm); font-size: 1.5em; }
+        .table-header p { margin: 5px 0 0 0; color: #7A8794; font-size: 0.95em; }
+
+        table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        th, td { padding: 16px; text-align: left; border-bottom: 1px solid var(--border); }
+        th { font-weight: 600; color: #7A8794; text-transform: uppercase; font-size: 0.82em; letter-spacing: 1px; border-bottom: 2px solid var(--border); }
+        
+        tbody tr:hover { background-color: #F8F9FA; }
+        tbody tr:last-child td { border-bottom: none; }
+
+        .badge { padding: 6px 14px; border-radius: 20px; font-size: 0.85em; font-weight: 600; display: inline-block; }
+        .badge.telat { background-color: #FFF2ED; color: var(--orange-warm); border: 1px solid #F5D3C1; }
+        .badge.tepat { background-color: #F0F4F8; color: var(--blue-warm); border: 1px solid #D0DCE6; }
+
+        /* Badge Tambahan untuk Sistem Pakar */
+        .badge-success { background-color: #E8F5E9; color: #2E7D32; border: 1px solid #C8E6C9; }
+        .badge-info { background-color: #E3F2FD; color: #0D47A1; border: 1px solid #BBDEFB; }
+        .badge-warning { background-color: #FFFDE7; color: #F57F17; border: 1px solid #FFF9C4; }
+        .badge-danger { background-color: #FFEBEE; color: #C62828; border: 1px solid #FFCDD2; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="/" class="back-btn">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            Kembali
+        </a>
+        <h2>Panel Administrator</h2>
+    </div>
+    
+    <div class="table-container">
+        <div class="table-header">
+            <h3> Evaluasi Otomatis (Sistem Pakar Forward Chaining)</h3>
+            <p>Keputusan sanksi atau apresiasi akademik yang ditarik berdasarkan akumulasi fakta kehadiran mahasiswa.</p>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>NIM</th>
+                    <th>Nama Mahasiswa</th>
+                    <th>Lokal</th>
+                    <th>Total Hadir</th>
+                    <th>Total Terlambat</th>
+                    <th>(Sanksi/Status)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for res in pakar_results %}
+                <tr>
+                    <td>{{ res.nim }}</td>
+                    <td style="font-weight: 600; color: var(--blue-warm);">{{ res.nama }}</td>
+                    <td>{{ res.lokal }}</td>
+                    <td><b style="color: var(--blue-warm);">{{ res.hadir }}</b> Kali</td>
+                    <td><b style="color: var(--orange-warm);">{{ res.telat }}</b> Kali</td>
+                    <td>
+                        <span class="badge {{ res.warna }}">
+                            {{ res.kesimpulan }}
+                        </span>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" style="text-align:center; padding: 30px; color: #7A8794;">Belum ada data mahasiswa terdaftar.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-container">
+        <div class="table-header">
+            <h3> Riwayat Aktivitas Pemindaian Kamera (Log Mentah)</h3>
+            <p>Catatan mentah setiap kali kamera mendeteksi dan mencocokkan wajah pengguna secara real-time.</p>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID Log</th>
+                    <th>Nama Lengkap</th>
+                    <th>NIM</th>
+                    <th>Lokal</th>
+                    <th>Waktu Akses</th>
+                    <th>Status Presensi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td style="color: #7A8794;">#{{ log[0] }}</td>
+                    <td style="font-weight: 600;">{{ log[1] }}</td>
+                    <td>{{ log[2] }}</td>
+                    <td>{{ log[3] }}</td>
+                    <td>{{ log[4] }}</td>
+                    <td>
+                        <span class="badge {% if log[5] == 'Terlambat' %}telat{% else %}tepat{% endif %}">
+                            {{ log[5] }}
+                        </span>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" style="text-align:center; padding: 30px; color: #7A8794;">Belum ada riwayat aktivitas pemindaian hari ini.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

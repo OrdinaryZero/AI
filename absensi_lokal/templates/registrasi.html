@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrasi Pengguna - Smart Campus</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --bg: #FAFAFA; --card: #FFFFFF; --text: #333333; 
+            --blue-warm: #4A6D8C; --blue-hover: #3B5A75; --orange-warm: #D47A43; --border: #E8E9EB;
+        }
+        body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        
+        .navbar { width: 100%; background: var(--card); padding: 15px 40px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; border-bottom: 1px solid var(--border); }
+        .navbar a.back-btn { color: var(--blue-warm); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: 0.3s; }
+        .navbar a.back-btn:hover { color: var(--orange-warm); }
+        .navbar h2 { margin: 0; font-size: 1.2em; color: var(--blue-warm); }
+
+        /* KOTAK DIPERBESAR KE MAX 1300px, KAMERA LEBIH DOMINAN (flex: 1.5) */
+        .container { display: flex; gap: 30px; max-width: 1300px; width: 100%; flex-wrap: wrap; margin-top: 40px; padding: 0 20px; box-sizing: border-box; }
+        
+        .card { background: var(--card); padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid var(--border); }
+        .card.camera-section { flex: 1.6; min-width: 400px; }
+        .card.form-section { flex: 1; min-width: 320px; }
+
+        .card h3 { margin-top: 0; color: var(--blue-warm); font-size: 1.5em; margin-bottom: 20px; }
+        
+        .camera-box { border-radius: 12px; overflow: hidden; border: 3px solid var(--border); background: #000; display: flex; aspect-ratio: 16/9; }
+        .camera-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.95em; color: #555; }
+        .form-group input { width: 100%; padding: 14px; border: 1.5px solid var(--border); border-radius: 10px; background: #FAFAFA; color: var(--text); font-family: inherit; font-size: 1em; box-sizing: border-box; transition: 0.3s; }
+        .form-group input:focus { outline: none; border-color: var(--blue-warm); background: #FFF; box-shadow: 0 0 0 4px rgba(74, 109, 140, 0.1); }
+        
+        button { background: var(--blue-warm); color: white; border: none; padding: 16px; border-radius: 10px; width: 100%; cursor: pointer; font-family: inherit; font-size: 1.1em; font-weight: 600; margin-top: 10px; transition: 0.3s; }
+        button:hover { background: var(--orange-warm); transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="/" class="back-btn">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            Kembali
+        </a>
+        <h2>Registrasi Mahasiswa</h2>
+    </div>
+    
+    <div class="container">
+        <div class="card camera-section">
+            <h3>📷 Pratinjau Wajah</h3>
+            <p style="color: #7A8794; font-size: 0.95em; margin-top: -15px;">Posisikan wajah dengan jelas di tengah kamera.</p>
+            <div class="camera-box">
+                <img src="{{ url_for('video_feed') }}" alt="Camera Feed">
+            </div>
+        </div>
+        <div class="card form-section">
+            <h3>📝 Data Pribadi</h3>
+            <form action="/register" method="POST">
+                <div class="form-group">
+                    <label>NIM</label>
+                    <input type="text" name="nim" required placeholder="Contoh: 12345678">
+                </div>
+                <div class="form-group">
+                    <label>Nama Lengkap</label>
+                    <input type="text" name="nama" required placeholder="Sesuai kartu identitas">
+                </div>
+                <div class="form-group">
+                    <label>Lokal / Kelas</label>
+                    <input type="text" name="lokal" required placeholder="Contoh: A / B / C">
+                </div>
+                <div class="form-group">
+                    <label>Angkatan</label>
+                    <input type="text" name="angkatan" required placeholder="Contoh: 2023">
+                </div>
+                <button type="submit">Simpan & Daftarkan Wajah</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
